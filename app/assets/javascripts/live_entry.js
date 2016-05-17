@@ -184,25 +184,95 @@
 		},
 
 		/**
+		 * Add a new row to the table (with js dataTables enabled)
+		 * @param object effort Pass in the object of the effort to add
+		 */
+		addEffortToTable: function( effort ) {
+			var table = $( document ).find( '.provisional-data-table' ).DataTable();
+			var trHtml = '\
+				<tr class="effort-station-row js-effort-station-row" data-effort-object="' + JSON.stringify( thisEffort ) + '" >\
+					<td class="split-name js-split-name">' + thisEffort.splitName + '</td>\
+					<td class="bib-number js-bib-number">' + thisEffort.bibNumber + '</td>\
+					<td class="time-in js-time-in">' + thisEffort.timeIn + '</td>\
+					<td class="time-out js-time-out">' + thisEffort.timeOut + '</td>\
+					<td class="pacer-in js-pacer-in">' + thisEffort.pacerInHtml + '</td>\
+					<td class="pacer-out js-pacer-out">' + thisEffort.pacerInHtml + '</td>\
+					<td class="effort-name js-effort-name">' + thisEffort.effortName + '</td>\
+					<td class="row-edit-btns">\
+						<button class="effort-row-btn fa fa-pencil edit-effort js-edit-effort btn btn-primary"></button>\
+						<button class="effort-row-btn fa fa-close delete-effort js-delete-effort btn btn-danger"></button>\
+						<button class="effort-row-btn fa fa-check submit-effort js-submit-effort btn btn-success"></button>\
+					</td>\
+				</tr>';
+
+			table.row.add( trHtml );
+		},
+
+		/**
 		 * Add the Effort data to the "cache" table on the page
 		 *
 		 */
 		addEffortToCache: function() {
 			// Initiate DataTable Plugin
 			$( '.js-provisional-data-table' ).DataTable();
+			var $formWrapper = $( '.js-form-wrapper' );
 
-			$( document ).on( 'click', '.js-add-to-cache', function( event ) {
+			$( document ).on( 'click', '#js-add-to-cache', function( event ) {
 				event.preventDefault();
 
-				// @TODO build this variable 'thisEffort' from fields on page
-				var thisEffort = {"werd": "hello"};
+
+				var thisEffort = {};
+
+				// Check table stored efforts for highest unique ID then create a new one.
+				var i = 0;
 				var storedEfforts = liveEntry.getStoredEfforts();
+				var storedUniqueIds = [];
+				if ( storedEfforts.length > 0 ) {
+					$.each( storedEfforts, function( index, value ) {
+						var thisEffort = $( this );
+						storedUniqueIds.push( thisEffort[index].uniqueId );
+					} );
+					var highestUniqueId = Math.max.apply( Math, storedUniqueIds );
+					thisEffort.uniqueId = highestUniqueId;
+				} else {
+					thisEffort.uniqueId = i++;
+				}
+
+
+				thisEffort.eventId = $( document ).find( '#js-event-id' ).html();;
+				thisEffort.splitId = $( document ).find( '#split-select option:selected' ).attr( 'data-split-id' );
+				thisEffort.effortId = $formWrapper.find( '#js-effort-id' ).val();
+				thisEffort.bibNumber = $formWrapper.find( '#js-bib-number' ).val();
+				thisEffort.liveBib = $formWrapper.find( '#js-live-bib' ).val();
+				thisEffort.effortName = $formWrapper.find( '#js-effort-name' ).val();
+				thisEffort.splitName = $( document ).find( '#split-select option:selected' ).html();
+				thisEffort.timeIn = $formWrapper.find( '#js-time-in' ).val();
+				thisEffort.timeOut = $formWrapper.find( '#js-time-out' ).val();
+
+				if ( $formWrapper.find( '#js-pacer-in' ).prop( 'checked' ) == true ) {
+					thisEffort.pacerIn = true;
+					thisEffort.pacerInHtml = 'Yes';
+				} else {
+					thisEffort.pacerIn = false;
+					thisEffort.pacerInHtml = 'No';
+				}
+
+				if ( $formWrapper.find( '#js-pacer-out' ).prop( 'checked' ) == true ) {
+					thisEffort.pacerOut = true;
+					thisEffort.pacerOutHtml = 'Yes';
+				} else {
+					thisEffort.pacerOut = false;
+					thisEffort.pacerOutHtml = 'No';
+				}
+
 
 				if( ! liveEntry.isMatchedEffort( thisEffort ) ) {
 					storedEfforts.push( thisEffort );
 					liveEntry.saveStoredEfforts( storedEfforts );
+					liveEntry.addEffortToTable( thisEffort );
+					console.log( 'no match - add to object' )
 				} else {
-
+					console.log( 'match found.' )
 				}
 
 				return false;
