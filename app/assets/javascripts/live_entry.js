@@ -188,7 +188,10 @@
 		 * @param object effort Pass in the object of the effort to add
 		 */
 		addEffortToTable: function( effort ) {
+
+			// initiate datatable plugin
 			var table = $( document ).find( '.provisional-data-table' ).DataTable();
+
 			var trHtml = '\
 				<tr class="effort-station-row js-effort-station-row" data-effort-object="' + JSON.stringify( thisEffort ) + '" >\
 					<td class="split-name js-split-name">' + thisEffort.splitName + '</td>\
@@ -205,7 +208,7 @@
 					</td>\
 				</tr>';
 
-			table.row.add( trHtml );
+			//table.row().add( ).draw();
 		},
 
 		/**
