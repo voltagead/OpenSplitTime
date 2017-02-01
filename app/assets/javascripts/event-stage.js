@@ -60,7 +60,7 @@
                 },
                 { 
                     path: '/participants', 
-                    component: { template: '#participants' }
+                    component: { props: ['eventData'], template: '#participants' }
                 },
                 { 
                     path: '/confirmation', 

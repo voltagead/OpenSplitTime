@@ -50,6 +50,17 @@
 				</div>
 			</div>
 		</div>
+		<div class="form-horizontal">
+			<label>Number of Laps *</label>
+			<div class="form-group col-xs-12">
+				
+				<input type="radio" id="laps-single" name="laps" value="single" />
+				<label for="laps-single">Single Lap Event</label>
+
+				<input type="radio" id="laps-multiple" name="laps" value="multiple" />
+				<label for="laps-multiple">Multiple Laps</label>
+			</div>
+		</div>
 		<div class="well well-sm row" v-show="eventData.course.new">
 			<div class="form-group col-xs-12">
 				<label for="event-name">Course Name</label>
