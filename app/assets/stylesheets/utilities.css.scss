@@ -116,14 +116,28 @@ label.switchery-label {
 	}
 }
 
-.form-group {
-	label.required:after {
-		content: ' *';
-		color: $blue;
+/** Required star **/
+label.required:after {
+	content: ' *';
+	color: $blue;
 
+}
+
+/**********
+Modal Styles
+***********/
+@media ( min-width: $break-medium ) {
+	.modal-lg {
+		max-width: $max-width;
+		width: 90%;
 	}
 }
 
+@media ( min-width: $break-small ) {
+	.modal-dialog {
+		width: 660px;
+	}
+}
 
 /***********
 Help Tooltip Icon
@@ -132,7 +146,7 @@ Help Tooltip Icon
 	display: inline-block;
 	font-size: 16px;
 	position: relative;
-
+	margin-top: -1px;
 	&:before {
 		display: block;
 		content: '';
@@ -403,8 +417,49 @@ span.brackets {
 	}
 }
 
-.radio {
-	input {
-		background: transparent;
+/** Radio Buttons **/
+.custom-radio {
+	display: none;
+	
+	& + label {
+		position: relative;
+		padding-left: 25px;
+		cursor: pointer;
 	}
+
+	& + label:before {
+		content: '';
+		width: 20px;
+		height: 20px;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border-radius: 50%;
+		border: 1px solid #D6D6D6;	
+	}
+
+	&:checked + label:after {
+		content: '';
+		width: 12px;
+		height: 12px;
+		position: absolute;
+		left: 10px;
+		top: 10px;
+		margin: -6px 0 0 -6px;
+		border-radius: 50%;
+		background-color: #2BADD6;		
+	}
+}
+
+
+/** No Gutter Hack for Bootstrap (https://julienmelissas.com/no-gutter-column-trick-for-bootstrap/) */
+.row.no-gutters {
+	margin-right: 0;
+	margin-left: 0;
+}
+
+.row.no-gutters > [class^="col-"],
+.row.no-gutters > [class*=" col-"] {
+	padding-right: 0;
+	padding-left: 0;
 }
