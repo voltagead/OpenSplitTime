@@ -1,5 +1,5 @@
 (function ($) {
-
+	
     /**
      * Blanks for adding new items to lists. Vuejs 
      * will not work if these are not defined.
@@ -16,7 +16,10 @@
             beacon: '',
             city: '',
             state: '',
-            country: ''
+            country: '',
+            countryID: 0,
+            starthours: '',
+            startminutes: ''
         },
         split: {
             name: '',
@@ -637,10 +640,11 @@
                     watch: {
                         model: {
                             handler: function () {
+                            	this.model.country = this.countries[ this.model.countryID - 1 ];
                                 this.valid = !this.validator( this.model );
                             },
                             deep: true
-                        }
+                        },
                     },
                     mounted: function() {
                         var self = this;
@@ -657,7 +661,14 @@
                             console.info( 'edit-modal', self._uid, 'Cloning changes back to source' );
                         } );
                     },
-                    data: function() { return { model: {}, valid: false }; }
+                    data: function() { 
+                    	return {
+                    		countries: country_arr,
+                    		regions: s_a,
+                    		model: {},
+                    		valid: false
+                    	};
+                    }
                 } );
             }
          },
@@ -766,6 +777,54 @@
         },
 
         /**
+         * This method populates the country dropdowns 
+         *
+         * @author modified from: http://jsfiddle.net/bdhacker/eRv2W/
+         */
+        populateStates: function( countryEleId, stateEleId ) {
+			var selectedCountryIndex = document.getElementById( countryElementId ).selectedIndex;
+			var stateElement = document.getElementById( stateElementId );
+			stateElement.length = 0; // Fixed by Julian Woods
+			stateElement.options[0] = new Option( 'Select State', '' );
+			stateElement.selectedIndex = 0;
+			var state_arr = s_a[selectedCountryIndex].split( "|" );
+			for ( var i = 0; i < state_arr.length; i++ ) {
+				stateElement.options[stateElement.length] = new Option( state_arr[i], state_arr[i] );
+			}
+        },
+
+        /**
+         * This method populates the state / regions dropdowns 
+         * 
+         * @author modified from: http://jsfiddle.net/bdhacker/eRv2W/
+         */
+        populateCountries: function( countryEleId, stateEleId ) {
+
+			// given the id of the <select> tag as function argument, it inserts <option> tags
+			var countryElement = document.getElementById(countryElementId);
+			countryElement.length = 0;
+			countryElement.options[0] = new Option( 'Select Country', '-1' );
+			countryElement.selectedIndex = 0;
+			for ( var i = 0; i < country_arr.length; i++ ) {
+				countryElement.options[ countryElement.length ] = new Option( country_arr[i], country_arr[i] );
+			}
+
+			// Assigned all countries. Now assign event listener for the states.
+			if ( stateElementId ) {
+				countryElement.onchange = function () {
+					populateStates( countryElementId, stateElementId );
+				};
+			}        	
+        },
+
+        /**
+         * Method to populate the participants city and state / region in the participants modal
+         */
+        populateParticipantsLocale: function() {
+        	populateCountries( 'js-participants-country' );
+        },
+
+        /**
          *
          */
         ajaxImport: {
@@ -808,6 +867,7 @@
     };
 
     $( 'body.stage' ).ready(function () {
+    	console.log( country_arr );
         eventStage.init();
     });
 
